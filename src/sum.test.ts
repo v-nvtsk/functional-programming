@@ -20,6 +20,7 @@ describe("sum", () => {
     expect("" + s(1)).toBe("1");
     expect(+s(3)(4)(5)).toBe(12); // 12
     expect(sum(3)(4)(5).valueOf()).toBe(12);
+    expect(sum(3)(4)(5).toString()).toBe('12');
 
     const s3 = sum(3);
     expect(+s3(5)).toBe(8); // 8
