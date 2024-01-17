@@ -16,27 +16,9 @@ export class Parallel {
     const taskList = args;
 
     for (let i = 0; i < this.jobsCount; i += 1) {
-      const task = taskList.shift();
-      const promise = new Promise((resolve, reject) => {
-        task().then((res: any) => {
-          this.result.push(res);
-          resolve(res);
-        });
-      });
-      this.activeJobsCounter += 1;
-      promise.then(() => {
-        this.activeJobsCounter -= 1;
-        this.runNewJob(taskList);
-      });
+      this.runNewJob(taskList);
     }
-
-    return await this.getResult();
-  }
-
-  private async getResult(): Promise<[]> {
-    return new Promise((resolve) => {
-      this.onReadycb = resolve.bind(this.result);
-    });
+    return await this.getFinalResult();
   }
 
   private runNewJob(taskList: any[]): void {
@@ -47,16 +29,25 @@ export class Parallel {
       return;
     }
     const task = taskList.shift();
-    const promise = new Promise((resolve, reject) => {
+    new Promise((resolve) => {
       this.activeJobsCounter += 1;
       task().then((res: any) => {
         this.result.push(res);
         resolve(res);
       });
-    });
-    promise.then(() => {
-      this.activeJobsCounter -= 1;
-      this.runNewJob(taskList);
+    })
+      .then(() => {
+        this.activeJobsCounter -= 1;
+        this.runNewJob(taskList);
+      })
+      .catch((err: Error) => {
+        throw new Error(err.message);
+      });
+  }
+
+  private async getFinalResult(): Promise<[]> {
+    return new Promise((resolve) => {
+      this.onReadycb = resolve.bind(this.result);
     });
   }
 }
