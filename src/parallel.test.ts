@@ -96,4 +96,21 @@ describe("parallel", () => {
 
     expect(result).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   });
+
+  it("should return result ignoring rejected promises", async () => {
+    const result = await new Parallel(1).jobs(
+      async () => await new Promise((resolve) => setTimeout(resolve, 10, 1)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 50, 2)),
+      async () => await new Promise((resolve, reject) => setTimeout(reject, 20, null)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 90, 4)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 30, 5)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 10, 6)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 50, 7)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 20, 8)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 90, 9)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 30, 10)),
+    );
+
+    expect(result).toEqual([1, 2, 4, 5, 6, 7, 8, 9, 10]);
+  });
 });
