@@ -1,10 +1,6 @@
 import { semverSort } from "./sort";
 
-global.console = {
-  ...console,
-  log: jest.fn(),
-};
-console.log = jest.fn();
+jest.spyOn(console, "log").mockImplementation(jest.fn());
 
 describe("semverSort", () => {
   it("should be a function", () => {
