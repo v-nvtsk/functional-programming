@@ -1,0 +1,5 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# https://www.npmjs.com/package/lint-prepush
+npx lint-prepush
