@@ -15,5 +15,3 @@ export function semverSort(arr: string[]): any[] {
     .sort((a, b) => a[0] - b[0])
     .map((el) => String(el.join(".")));
 }
-
-

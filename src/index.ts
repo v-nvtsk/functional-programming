@@ -16,7 +16,6 @@ console.log(hof(3, 4)(5, 6)(7)); // 25
 console.log(hof(4, 5)(6)(7, 8)); // 30
 console.log(hof(5)(6)(7)(8)(9)); // 35
 
-
 console.log(+sum(0)); // 0;
 const s = sum();
 console.log("" + s(1)); // 1
@@ -25,8 +24,6 @@ console.log("" + s(3)(4)(5)); // 12
 const s3 = sum(3);
 console.log(+s3(5)); // 8
 console.log(s3(6).toString()); // 9
-
-
 
 const runner = new Parallel(2);
 
