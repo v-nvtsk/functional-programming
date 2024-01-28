@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-floating-promises */
 import { Parallel } from "./parallel";
 
 describe("parallel", () => {
@@ -112,5 +113,45 @@ describe("parallel", () => {
     );
 
     expect(result).toEqual([1, 2, 4, 5, 6, 7, 8, 9, 10]);
+  });
+
+  it("should be reusable", async () => {
+    const parallel = new Parallel(2);
+    await parallel.jobs(
+      async () => await new Promise((resolve) => setTimeout(resolve, 50, 1)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 10, 2)),
+    );
+    const result = await parallel.jobs(
+      async () => await new Promise((resolve) => setTimeout(resolve, 1, 1)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 1, 2)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 1, 3)),
+    );
+    expect(result).toEqual([1, 2, 3]);
+  });
+
+  it("should add jobs to active list", async () => {
+    const parallel = new Parallel(2);
+    parallel.jobs(
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 1)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 2)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 3)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 4)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 5)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 6)),
+    );
+
+    parallel.jobs(
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 1)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 2)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 3)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 4)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 5)),
+      async () => await new Promise((resolve) => setTimeout(resolve, 100, 6)),
+    );
+    expect(parallel.getTaskCount() + parallel.getActiveJobsCount()).toEqual(12);
+    expect(parallel.getActiveJobsCount()).toEqual(2);
+
+    const result = await parallel.jobs();
+    expect(result).toEqual([1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6]);
   });
 });

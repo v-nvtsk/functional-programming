@@ -7,49 +7,67 @@
 // указывает сколько данных обрабатывается в конкретный момент времени
 
 type Callback = (arg0: any) => void;
+type TaskFunction = () => Promise<any>;
 
 export class Parallel {
-  private readonly result: any[] = [];
+  private result: any[] = [];
   private activeJobsCounter: number = 0;
   private onReadycb: Callback | null = null;
+  private readonly taskList: TaskFunction[] = [];
 
   constructor(private readonly jobsCount: number) {}
   public async jobs(...args: any[]): Promise<any> {
-    const taskList = args;
+    const tasks = args;
+    tasks.forEach((el: TaskFunction) => this.taskList.push(el));
 
-    for (let i = 0; i < this.jobsCount; i += 1) {
-      this.runNewJob(taskList);
+    if (this.activeJobsCounter === 0) {
+      for (let i = 0; i < this.jobsCount; i += 1) {
+        this.runNewJob();
+      }
     }
+
     return await this.getFinalResult();
   }
 
-  private runNewJob(taskList: any[]): void {
-    if (taskList.length === 0) {
+  private runNewJob(): void {
+    if (this.taskList.length === 0) {
       if (this.activeJobsCounter === 0) {
-        if (this.onReadycb !== null) this.onReadycb(this.result);
+        if (this.onReadycb !== null) {
+          this.onReadycb(this.result);
+          this.onReadycb = null;
+          this.result = [];
+        }
       }
       return;
     }
-    const task = taskList.shift();
-    new Promise((resolve) => {
+    const task = this.taskList.shift();
+    if (task !== undefined) {
       this.activeJobsCounter += 1;
       task()
         .then((res: any) => {
           this.result.push(res);
-          resolve(res);
         })
-        .catch(() => {
-          resolve(null);
+        .catch((err: Error) => {
+          if (err !== null) console.error(err.message);
+        })
+        .finally(() => {
+          this.activeJobsCounter -= 1;
+          this.runNewJob();
         });
-    }).then(() => {
-      this.activeJobsCounter -= 1;
-      this.runNewJob(taskList);
-    });
+    }
   }
 
   private async getFinalResult(): Promise<[]> {
     return new Promise((resolve) => {
       this.onReadycb = resolve.bind(this.result);
     });
+  }
+
+  public getTaskCount(): number {
+    return this.taskList.length;
+  }
+
+  public getActiveJobsCount(): number {
+    return this.activeJobsCounter;
   }
 }
