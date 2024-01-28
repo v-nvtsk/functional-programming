@@ -8,10 +8,9 @@ function checkDigit(num: number | undefined): number {
 }
 
 export function semverSort(arr: string[]): any[] {
-  return arr
-    .map((el: string): number[] => el.split(".").map(Number))
-    .sort((a, b) => checkDigit(a[2]) - checkDigit(b[2]))
-    .sort((a, b) => checkDigit(a[1]) - checkDigit(b[1]))
-    .sort((a, b) => a[0] - b[0])
-    .map((el) => String(el.join(".")));
+  const result = arr.map((el: string): number[] => el.split(".").map(Number));
+  for (let i = result.length - 1; i >= 0; i -= 1) {
+    result.sort((a, b) => checkDigit(a[i]) - checkDigit(b[i]));
+  }
+  return result.map((el) => String(el.join(".")));
 }

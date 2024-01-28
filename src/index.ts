@@ -44,6 +44,14 @@ console.log("semverSort: ");
 console.log(semverSort(["1.0.5", "2.5.0", "0.12.0", "1", "1.23.45", "1.4.50", "1.2.3.4.5.6.7"]));
 console.log("Result should be: ", ["0.12.0", "1", "1.0.5", "1.2.3.4.5.6.7", "1.4.50", "1.23.45", "2.5.0"]);
 
+console.log("semverSort 2: ");
+const semverTestData = {
+  input: ["1.0.5.4.3.2", "2.5.0.2.4.5", "0.12.0", "1", "1.23.45", "2.5.0.1.3", "1.2.3.4.5.6.7"],
+  output: ["0.12.0", "1", "1.0.5.4.3.2", "1.2.3.4.5.6.7", "1.23.45", "2.5.0.1.3", "2.5.0.2.4.5"],
+};
+console.log(semverSort(semverTestData.input));
+console.log(semverTestData.output);
+
 console.log("spiral:");
 spiral([
   [0, 1, 2, 3, 4],
