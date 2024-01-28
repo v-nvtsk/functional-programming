@@ -18,6 +18,9 @@ export class Parallel {
   constructor(private readonly jobsCount: number) {}
   public async jobs(...args: any[]): Promise<any> {
     const tasks = args;
+
+    if (tasks.length + this.activeJobsCounter === 0) return [];
+
     tasks.forEach((el: TaskFunction) => this.taskList.push(el));
 
     if (this.activeJobsCounter === 0) {
