@@ -2,9 +2,10 @@
 // Пример использования функции
 
 type Fn = (...args: any[]) => any;
+type Hof = (...args: number[]) => Hof;
 
-export function curry(fn: Fn): Fn {
-  return function curried(...args: number[]): Fn {
+export function curry(fn: Fn): Hof {
+  return function curried(...args: number[]): Hof {
     if (args.length >= fn.length) {
       return fn.apply(null, args);
     }

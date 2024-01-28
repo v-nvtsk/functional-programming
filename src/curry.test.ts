@@ -10,7 +10,9 @@ describe("curry", () => {
     );
   });
 
-  let hof: any;
+  type Hof = (...args: number[]) => Hof;
+
+  let hof: Hof;
   beforeEach(() => {
     const func = (a: number, b: number, c: number, d: number, e: number): number => a + b + c + d + e;
     hof = curry(func);
