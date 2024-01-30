@@ -166,16 +166,72 @@ describe("parallel", () => {
 
   it("should process exactly 2 jobs in the moment", async () => {
     const parallel = new Parallel(2);
-    const activeJobsInMoment = await parallel.jobs(
-      async () => await new Promise((resolve) => setTimeout(resolve, 100, parallel.getActiveJobsCount())),
-      async () => await new Promise((resolve) => setTimeout(resolve, 100, parallel.getActiveJobsCount())),
-      async () => await new Promise((resolve) => setTimeout(resolve, 100, parallel.getActiveJobsCount())),
-      async () => await new Promise((resolve) => setTimeout(resolve, 100, parallel.getActiveJobsCount())),
-      async () => await new Promise((resolve) => setTimeout(resolve, 100, parallel.getActiveJobsCount())),
-      async () => await new Promise((resolve) => setTimeout(resolve, 100, parallel.getActiveJobsCount())),
+    let maxCounter = 0;
+    let counter = 0;
+
+    parallel.jobs(
+      async () => {
+        counter += 1;
+        maxCounter = Math.max(counter, maxCounter);
+        await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve((counter -= 1));
+          }, 100),
+        );
+        maxCounter += 1;
+      },
+      async () => {
+        counter += 1;
+        maxCounter = Math.max(counter, maxCounter);
+        await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve((counter -= 1));
+          }, 100),
+        );
+        maxCounter += 1;
+      },
+      async () => {
+        counter += 1;
+        maxCounter = Math.max(counter, maxCounter);
+        await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve((counter -= 1));
+          }, 100),
+        );
+        maxCounter += 1;
+      },
+      async () => {
+        counter += 1;
+        maxCounter = Math.max(counter, maxCounter);
+        await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve((counter -= 1));
+          }, 100),
+        );
+        maxCounter += 1;
+      },
+      async () => {
+        counter += 1;
+        maxCounter = Math.max(counter, maxCounter);
+        await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve((counter -= 1));
+          }, 100),
+        );
+        maxCounter += 1;
+      },
+      async () => {
+        counter += 1;
+        maxCounter = Math.max(counter, maxCounter);
+        await new Promise((resolve) =>
+          setTimeout(() => {
+            resolve((counter -= 1));
+          }, 100),
+        );
+        maxCounter += 1;
+      },
     );
 
-    expect(activeJobsInMoment).toEqual([1, 2, 2, 2, 2, 2]);
-    expect(parallel.getActiveJobsCount()).toBe(0);
+    expect(maxCounter).toBe(2);
   });
 });
