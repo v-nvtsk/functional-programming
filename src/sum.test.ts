@@ -17,7 +17,7 @@ describe("sum", () => {
     expect(+sum()).toBe(0);
     expect(Number(sum(1))).toBe(1);
     const s = sum();
-    expect("" + s(1)).toBe("1");
+    expect("" + String(s(1))).toBe("1");
     expect(+s(3)(4)(5)).toBe(12); // 12
     expect(sum(3)(4)(5).valueOf()).toBe(12);
     expect(sum(3)(4)(5).toString()).toBe("12");
