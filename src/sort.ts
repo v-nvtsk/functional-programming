@@ -1,6 +1,6 @@
 // Реализовать функцию, реализующую сортировку с учетом правил semver
 
-function checkDigit(num: number | undefined): number {
+function getValidNumber(num: number | undefined): number {
   if (num === undefined) {
     return 0;
   }
@@ -10,7 +10,7 @@ function checkDigit(num: number | undefined): number {
 export function semverSort(arr: string[]): any[] {
   const result = arr.map((el: string): number[] => el.split(".").map(Number));
   for (let i = result.length - 1; i >= 0; i -= 1) {
-    result.sort((a, b) => checkDigit(a[i]) - checkDigit(b[i]));
+    result.sort((a, b) => getValidNumber(a[i]) - getValidNumber(b[i]));
   }
   return result.map((el) => String(el.join(".")));
 }
